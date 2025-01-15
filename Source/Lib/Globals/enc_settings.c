@@ -917,6 +917,11 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
+    if (config->spy_rd != 0 && config->spy_rd != 1) {
+        SVT_ERROR("Instance %u: spy-rd must be between 0 and 1\n", channel_number + 1);
+        return_error = EB_ErrorBadParameter;
+    }
+
     return return_error;
 }
 
@@ -1231,6 +1236,10 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
         if (config->psy_rd > 0.0 && config->tune != 1) {
             SVT_INFO("SVT [config]: PSY-RD Strength \t\t\t\t\t\t: %.2f\n",
                     config->psy_rd);
+        }
+        if (config->spy_rd) {
+            SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: %s\n",
+                    config->spy_rd ? "oui" : "non");
         }
     }
 #ifdef DEBUG_BUFFERS
@@ -2233,6 +2242,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"lossless", &config_struct->lossless},
         {"avif", &config_struct->avif},
         {"max-32-tx-size", &config_struct->max_32_tx_size},
+        {"spy-rd", &config_struct->spy_rd},
     };
     const size_t bool_opts_size = sizeof(bool_opts) / sizeof(bool_opts[0]);
 
