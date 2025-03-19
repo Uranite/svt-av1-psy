@@ -912,7 +912,7 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->spy_rd > 0 && config->spy_rd < 2) {
+    if (config->spy_rd < 0 || config->spy_rd > 2) {
         SVT_ERROR("Instance %u: spy-rd must be between 0 and 2\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
@@ -1242,19 +1242,9 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
             SVT_INFO("SVT [config]: PSY-RD Strength \t\t\t\t\t\t: %.2f\n",
                     config->psy_rd);
         }
-        switch (config->spy_rd) {
-            //Partial spy-rd
-            case 2:
-                SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: ouais\n");
-                break;
-            //Full spy-rd
-            case 1:
-                SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: oui\n");
-                break;
-            default:
-                SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: non\n");
-                break;
-        }
+        // 1 is full spy-rd, 2 is partial spy-rd
+        SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: %s\n",
+        config->spy_rd == 1 ? "oui" : (config->spy_rd == 2 ? "ouais" : "non"));
         
     }
 #ifdef DEBUG_BUFFERS
